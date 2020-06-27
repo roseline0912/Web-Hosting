@@ -1,0 +1,153 @@
+$ python -m venv myvenv  //가상환경 만듦.
+
+$ pip list  //깔린 패키지 목록
+
+
+
+
+$ ls
+$ ls -al
+
+
+
+
+
+$ . myvenv/bin/activate  //만들었던 가상환경을 활성화 시킴.
+$ pip list
+
+$ deactivate //현재 활성화 되어있던 가상환경을 비활성화 시킴.
+
+
+
+
+
+//현재 장고버전이 3이지만, 현재 AWS에서는 2임.
+//최신 버전 설치하면, 오류가 나므로 그냥 사용하겠음.
+
+
+
+
+$ rm -r myvenv/    //myvenv를 지움.
+$ ls
+
+
+
+
+$ django-admin startproject wordcount     // wordcount 프로젝트 폴더 만듦.
+$ ls      // 결과는 manage.py  wordcount
+        // manage.py 가 있는곳에서 모든 코드를 작성
+        
+        
+        
+        
+$ python manage.py runserver 8080     // 서버 돌리기 시작
+
+
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// 로직 담당은 view.py 에서 한다.
+//view에서 고친 로직의 결과를 사용자가 html에서 볼 수 있도록 하려면, templates.py를 사용한다.
+
+wordcount폴더에서 settings.py 중
+ALLOWED_HOSTS = [] 를 ALLOWED_HOSTS = ['*']로 바꿈.
+
+$ python manage.py runserver 8080     // 서버 돌리기 시작
+
+$ python manage.py startapp mycount       //mycount 라는 앱 생성. 그냥 폴더와 비교하여 app.py, models.py, views.py 가 포함되어 있다.
+
+
+// mycount폴더 - migrations폴더 에 templates폴더를 만듦.
+
+//templates 폴더에 index.html 생성 후, 페이지 작성
+
+
+
+//views.py 파일에서 다음을 추가 작성
+def index(request):
+return render(request, 'index.html')
+
+
+
+//url.py 파일에서 다음을 작성
+________________________________________
+
+from django.contrib import admin
+from django.urls import path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+]
+________________________________________
+
+위를 아래처럼 바꿈.
+________________________________________
+
+from django.urls import path
+
+from mycount.views import index
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('',index,name="index"),
+]
+________________________________________
+
+
+
+
+//settings.py에서 다음을 작성
+________________________________________
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+________________________________________
+
+위를 아래처럼 바꿈.
+________________________________________
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'mycount',  //추가
+]
+________________________________________
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//views.py 에서 다음과 같이 쓴다.
+
+from django.shortcuts import render
+
+# Create your views here.
+def index(request):
+    print(request.GET.get('myword'))
+    
+    context = dict()
+    word_len=len(request.GET.get('myword'))
+    context['display_len']=word_len
+    
+    return render(request, 'index.html',context)
+
+
+
+//index.html에서 body 안에 다음과 같이 쓴다.
+
+글자길이 : {{display_len}}
+
+
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+html에서 view.py의 로직으로 부터 받은 변수를 사용한다고 할때.
+변수를 그대로 쓴다면 {{ }} 이중괄호를 쓰고
+html내에 그대로 로직을 쓴다고 할 때, {} 단괄호를 쓴다.

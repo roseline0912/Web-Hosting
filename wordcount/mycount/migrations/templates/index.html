@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>단어 계산기</h1>
+    
+    <form>
+        <input type="text" name="myword"/>
+        <input type="submit" value="계산"/>
+    </form>
+    <h1>글자길이 : {{display_len}}</h1>
+    
+    {% for word,cnt in display_cnt.items %}
+    <h3>{{word}}:{{cnt}}</h3>
+    {% end for %}
+    
+</body>
+</html>
